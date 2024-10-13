@@ -1,6 +1,12 @@
 import assert from "assert";
 import { suite, test } from "node:test";
-import { Signal } from "./signals";
+import { Signal as OrgSignal } from "./signals";
+
+class Signal<T> extends OrgSignal<T> {
+  public setUpdatedFlag() {
+    return super.setUpdatedFlag();
+  }
+}
 
 void suite("Testing for Signals", () => {
   void test("It should create a signal with initial value", () => {
@@ -15,6 +21,7 @@ void suite("Testing for Signals", () => {
 
   void test("It should update when signal changed", () => {
     const signal = new Signal(1);
+    const mockSetUpdateFlag = test.mock.method(signal, "setUpdatedFlag");
 
     assert.strictEqual(
       signal.value,
@@ -29,10 +36,17 @@ void suite("Testing for Signals", () => {
       2,
       "The value of signal is not updated correctly."
     );
+
+    assert.strictEqual(
+      mockSetUpdateFlag.mock.callCount(),
+      1,
+      "The setUpdatedFlag was not called when the value is changed."
+    );
   });
 
   void test("It should not update when signal changed to the same value", () => {
     const signal = new Signal(1);
+    const mockSetUpdateFlag = test.mock.method(signal, "setUpdatedFlag");
 
     assert.strictEqual(
       signal.value,
@@ -46,6 +60,12 @@ void suite("Testing for Signals", () => {
       signal.value,
       1,
       "The value of signal is not updated correctly."
+    );
+
+    assert.strictEqual(
+      mockSetUpdateFlag.mock.callCount(),
+      0,
+      "The setUpdatedFlag was called when the value is not changed."
     );
   });
 
