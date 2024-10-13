@@ -52,7 +52,7 @@ class ComputedSignal<T> extends BaseSignal<T> {
   shouldUpdate = false;
 
   #value: T;
-  #fn: () => T;
+  readonly #fn: () => T;
 
   constructor(fn: () => T) {
     super();
@@ -62,12 +62,11 @@ class ComputedSignal<T> extends BaseSignal<T> {
 
   get value() {
     if (BaseSignal.computingMode) BaseSignal.toBeDependant.push(this);
-
-    let value = this.#value;
     if (this.shouldUpdate) {
-      value = this.#fn();
+      this.#value = this.#fn();
       this.shouldUpdate = false;
     }
-    return value;
+
+    return this.#value;
   }
 }
