@@ -1,5 +1,4 @@
 abstract class BaseSignal<T> {
-  protected static readonly dependencyGraph: BaseSignal<unknown>[] = [];
   protected static computingMode = false;
   protected static toBeDependant: BaseSignal<unknown>[] = [];
   protected dependants: ComputedSignal<unknown>[] = [];
@@ -33,7 +32,6 @@ export class Signal<T> extends BaseSignal<T> {
   constructor(value: T) {
     super();
     this.#value = value;
-    BaseSignal.dependencyGraph.push(this);
   }
 
   get value() {
